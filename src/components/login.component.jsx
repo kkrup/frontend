@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {withRouter} from "react-router";
+import axios from "axios";
 
 
 class Login extends Component {
@@ -18,7 +19,35 @@ class Login extends Component {
         };
 
         this.isDisabledButton = true;
-        this.handleChange = this.handleChange.bind(this)
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    async handleSubmit(event) {
+        event.preventDefault();
+
+        let validity = Object.values(this.state.errors).every(
+            (val) => val
+        );
+
+        if (validity) {
+            await axios.post(
+                "http://localhost:8000/api/token/",
+                {
+                    username: this.state.username,
+                    password: this.state.password
+                },
+                )
+                .then((r) => {
+                        if (r.status === 200) {
+                            localStorage.setItem("accessToken", r.data.access);
+                            localStorage.setItem("refreshToken", r.data.refresh);
+                            localStorage.setItem("username", this.state.username)
+                            this.props.history.push('/')
+                        }
+                    }
+                );
+        }
     }
 
     handleChange(event) {
@@ -47,7 +76,7 @@ class Login extends Component {
 
     render() {
         return (
-            <form>
+            <form onSubmit={this.handleSubmit}>
                 <h3>Sign In</h3>
 
                 <div className="form-group">

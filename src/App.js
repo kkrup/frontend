@@ -2,9 +2,30 @@ import React from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import axios from "axios";
 
 import Login from "./components/login.component";
 import SignUp from "./components/singup.component";
+import Home from "./components/home.component";
+import {apiUrl} from "./constants";
+
+
+axios.interceptors.request.use(
+    config => {
+      const { origin } = new URL(config.url);
+      const allowerOrigins = [apiUrl];
+      const token = localStorage.getItem("accessToken");
+
+      if (allowerOrigins.includes(origin)) {
+        config.headers.authorization = `Bearer ${token}`;
+      }
+
+      return config;
+    },
+    error => {
+    return Promise.reject(error)
+    }
+);
 
 function App() {
   return (<Router>
@@ -28,7 +49,7 @@ function App() {
       <div className="auth-wrapper">
         <div className="auth-inner">
           <Switch>
-            <Route exact path='/' component={Login} />
+            <Route exact path='/' component={Home} />
             <Route path="/sign-in" component={Login} />
             <Route path="/sign-up" component={SignUp} />
           </Switch>

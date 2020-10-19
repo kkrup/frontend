@@ -40,10 +40,21 @@ class SignUp extends Component {
                 password: this.state.password
             };
 
-            await axios.post("http://localhost:5000/API/user", body, )
+            const headers = {
+                "Content-Type": "application/json",
+            };
+
+
+            await axios.post(
+                "http://localhost:8000/api/users/register/",
+                body,
+                {
+                    headers
+                }
+                )
                 .then((r) => {
                         if (r.status === 200) {
-                            this.props.history.push('/home')
+                            this.props.history.push('/')
                         }
                     }
                 );
